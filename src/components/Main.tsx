@@ -1,5 +1,6 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Slide, ToastContainer } from "react-toastify";
+import Minter from "./Minter";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -10,7 +11,7 @@ export default function Main() {
     <main className="mt-18 flex h-full w-full flex-grow items-center justify-center px-8 py-8 sm:px-16">
       {publicKey ? (
         <div className="mx-auto w-full max-w-6xl">
-          <>placeholder</>
+          <Minter />
         </div>
       ) : (
         <div className="mx-auto w-full max-w-2xl">
