@@ -6,6 +6,7 @@ import { mplTokenMetadata } from "@metaplex-foundation/mpl-token-metadata";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { UmiContext } from "./UmiContext";
 import { irysUploader } from "@metaplex-foundation/umi-uploader-irys";
+import { mplBubblegum } from "@metaplex-foundation/mpl-bubblegum";
 
 export default function UmiContextProvider({
   children,
@@ -23,6 +24,7 @@ export default function UmiContextProvider({
       umi = createUmi(connection.rpcEndpoint)
         .use(walletAdapterIdentity(wallet))
         .use(mplTokenMetadata())
+        .use(mplBubblegum())
         .use(
           irysUploader({
             // mainnet address: "https://node1.irys.xyz"
