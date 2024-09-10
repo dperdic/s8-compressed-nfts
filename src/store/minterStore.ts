@@ -27,6 +27,11 @@ interface TransactionStateStore {
   setTransactionInProgress: (inProgress: boolean) => void;
 }
 
+interface FileUrlStore {
+  url: string | null;
+  setUrl: (newUrl: string | null) => void;
+}
+
 export const useMerkleTreeAddressStore = create<MerkleTreeAddressStore>(
   (set) => ({
     merkleTreeAddress: null,
@@ -62,3 +67,23 @@ export const useTransactionStateStore = create<TransactionStateStore>(
       set(() => ({ transactionInProgress: inProgress })),
   }),
 );
+
+export const useCollectionImageUrlStore = create<FileUrlStore>((set) => ({
+  url: null,
+  setUrl: (newUrl) => set(() => ({ url: newUrl })),
+}));
+
+export const useCollectionMetadataUrlStore = create<FileUrlStore>((set) => ({
+  url: null,
+  setUrl: (newUrl) => set(() => ({ url: newUrl })),
+}));
+
+export const useNftImageUrlStore = create<FileUrlStore>((set) => ({
+  url: null,
+  setUrl: (newUrl) => set(() => ({ url: newUrl })),
+}));
+
+export const useNftMetadataUrlStore = create<FileUrlStore>((set) => ({
+  url: null,
+  setUrl: (newUrl) => set(() => ({ url: newUrl })),
+}));
