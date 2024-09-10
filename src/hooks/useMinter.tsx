@@ -21,6 +21,7 @@ import {
   useMerkleTreeStore,
   useTransactionStateStore,
 } from "../store/minterStore";
+import { NftMetadata } from "../utils/types";
 
 export default function useMinter() {
   const { umi } = useUmi();
@@ -209,6 +210,8 @@ export default function useMinter() {
 
   const createCollection = useCallback(
     async (
+      collectionName: string,
+      collectionSymbol: string,
       content: string | Uint8Array,
       fileName: string,
       mimeType: string,
@@ -224,19 +227,19 @@ export default function useMinter() {
 
       const collectionMint = generateSigner(umi);
 
-      const imageUri = uploadImage(content, fileName, mimeType);
+      const imageUri = await uploadImage(content, fileName, mimeType);
 
       if (!imageUri) {
         return;
       }
 
       // schema: https://developers.metaplex.com/token-metadata/token-standard#the-non-fungible-standard
-      const metadata = {
+      const metadata: NftMetadata = {
         name: "Dujo Perdić",
         description:
           "I'm a web2 and web3 developer based in Croatia. Connect with me and lets work together!",
-        external_url: "https://linkedin.com/in/dujo-perdic",
         image: imageUri,
+        external_url: "https://linkedin.com/in/dujo-perdic",
         attributes: [
           {
             trait_type: "LinkedIn",
@@ -275,9 +278,9 @@ export default function useMinter() {
       try {
         const tx = await createNft(umi, {
           mint: collectionMint,
-          name: "Dujo's Business Cards",
+          name: collectionName,
           isMutable: true,
-          symbol: "",
+          symbol: collectionSymbol,
           uri: metadataUri,
           sellerFeeBasisPoints: percentAmount(100),
           isCollection: true,
