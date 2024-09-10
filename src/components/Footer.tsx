@@ -3,7 +3,7 @@ export default function Footer() {
     <footer className="flex h-18 w-full items-center bg-black px-8 text-white sm:px-16">
       <div className="flex h-full w-full flex-grow py-4">
         <a
-          href="https://github.com/dperdic/s8-compressed-nft"
+          href="https://github.com/dperdic/s8-compressed-nfts"
           target="_blank"
           className="flex flex-row gap-2"
         >

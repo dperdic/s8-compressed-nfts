@@ -23,7 +23,7 @@ import {
 } from "../store/minterStore";
 
 export default function useMinter() {
-  const umi = useUmi();
+  const { umi } = useUmi();
 
   const merkleTreeAddress = useMerkleTreeAddressStore(
     (state) => state.merkleTreeAddress,
@@ -47,37 +47,61 @@ export default function useMinter() {
     (state) => state.setTransactionInProgress,
   );
 
-  const createMerkleTree = useCallback(async () => {
-    setTransactionInProgress(true);
+  const createMerkleTree = useCallback(
+    async (maxDepth: number, maxBufferSize: number, canopyDepth: number) => {
+      setTransactionInProgress(true);
 
-    const merkleTree = generateSigner(umi);
+      if (!umi) {
+        toast.error("Umi not initialized");
+        setTransactionInProgress(false);
 
-    // 512 cNFTs can be minted with these settings
-    // calculator: https://compressed.app/
-    const builder = await createTree(umi, {
-      merkleTree,
-      maxDepth: 9,
-      maxBufferSize: 16,
-      canopyDepth: 0,
-    });
+        return;
+      }
 
-    try {
-      const tx = await builder.sendAndConfirm(umi);
+      const merkleTree = generateSigner(umi);
 
-      setAddress(merkleTree.publicKey);
+      const builder = await createTree(umi, {
+        merkleTree,
+        maxDepth: maxDepth,
+        maxBufferSize: maxBufferSize,
+        canopyDepth: canopyDepth,
+      });
 
-      toast.success(
-        `Transaction hash: ${base58.deserialize(tx.signature)[0]}}`,
-      );
-    } catch (_error) {
-      toast.error("An error occured while creating merkle tree");
-    }
+      try {
+        const tx = await builder.sendAndConfirm(umi, {
+          confirm: {
+            commitment: "confirmed",
+          },
+          send: {
+            commitment: "confirmed",
+            maxRetries: 3,
+          },
+        });
 
-    setTransactionInProgress(false);
-  }, [setAddress, setTransactionInProgress, umi]);
+        setAddress(merkleTree.publicKey);
+
+        toast.success(
+          `Transaction hash: ${base58.deserialize(tx.signature)[0]}}`,
+        );
+      } catch (error) {
+        toast.error("An error occured while creating merkle tree");
+        console.error(error);
+      }
+
+      setTransactionInProgress(false);
+    },
+    [setAddress, setTransactionInProgress, umi],
+  );
 
   const fetchTree = useCallback(async () => {
     setTransactionInProgress(true);
+
+    if (!umi) {
+      toast.error("Umi not initialized");
+      setTransactionInProgress(false);
+
+      return;
+    }
 
     if (!merkleTreeAddress) {
       toast.error("No address provided");
@@ -101,6 +125,13 @@ export default function useMinter() {
 
   const fetchTreeConfig = useCallback(async () => {
     setTransactionInProgress(true);
+
+    if (!umi) {
+      toast.error("Umi not initialized");
+      setTransactionInProgress(false);
+
+      return;
+    }
 
     if (!merkleTreeAddress) {
       toast.error("No address provided");
@@ -126,6 +157,56 @@ export default function useMinter() {
     setTransactionInProgress(false);
   }, [merkleTreeAddress, setTransactionInProgress, setTreeConfig, umi]);
 
+  const uploadImage = useCallback(
+    async (
+      content: string | Uint8Array,
+      fileName: string,
+      mimeType: string,
+    ) => {
+      if (!umi) {
+        toast.error("Umi not initialized");
+        setTransactionInProgress(false);
+
+        return;
+      }
+
+      try {
+        const genericUmiFile = createGenericFile(content, fileName, {
+          tags: [{ name: "Content-Type", value: mimeType }],
+        });
+
+        const imageUri = await umi.uploader.upload([genericUmiFile]);
+
+        return imageUri[0];
+      } catch (error) {
+        toast.error(`An error occured while uploading image: ${error}}`);
+
+        return null;
+      }
+    },
+    [setTransactionInProgress, umi],
+  );
+
+  const uploadMetadata = useCallback(
+    async (metadata: any) => {
+      if (!umi) {
+        toast.error("Umi not initialized");
+        setTransactionInProgress(false);
+
+        return;
+      }
+
+      try {
+        return await umi.uploader.uploadJson(metadata);
+      } catch (error) {
+        toast.error(`An error occured while uploading metadata: ${error}}`);
+
+        return null;
+      }
+    },
+    [setTransactionInProgress, umi],
+  );
+
   const createCollection = useCallback(
     async (
       content: string | Uint8Array,
@@ -133,6 +214,13 @@ export default function useMinter() {
       mimeType: string,
     ) => {
       setTransactionInProgress(true);
+
+      if (!umi) {
+        toast.error("Umi not initialized");
+        setTransactionInProgress(false);
+
+        return;
+      }
 
       const collectionMint = generateSigner(umi);
 
@@ -193,7 +281,15 @@ export default function useMinter() {
           uri: metadataUri,
           sellerFeeBasisPoints: percentAmount(100),
           isCollection: true,
-        }).sendAndConfirm(umi);
+        }).sendAndConfirm(umi, {
+          confirm: {
+            commitment: "confirmed",
+          },
+          send: {
+            commitment: "confirmed",
+            maxRetries: 3,
+          },
+        });
 
         toast.success(
           `Transaction hash: ${base58.deserialize(tx.signature)[0]}}`,
@@ -206,12 +302,19 @@ export default function useMinter() {
 
       setTransactionInProgress(false);
     },
-    [setCollectionAddress, setTransactionInProgress, umi],
+    [setCollectionAddress, setTransactionInProgress, umi, uploadImage],
   );
 
   const mintToCollection = useCallback(
-    async (metadata: any) => {
+    async (_metadata: any) => {
       setTransactionInProgress(true);
+
+      if (!umi) {
+        toast.error("Umi not initialized");
+        setTransactionInProgress(false);
+
+        return;
+      }
 
       if (!merkleTreeAddress || !collectionAddress) {
         setTransactionInProgress(false);
@@ -233,42 +336,20 @@ export default function useMinter() {
             { address: umi.identity.publicKey, verified: true, share: 100 },
           ],
         },
-      }).sendAndConfirm(umi);
+      }).sendAndConfirm(umi, {
+        confirm: {
+          commitment: "confirmed",
+        },
+        send: {
+          commitment: "confirmed",
+          maxRetries: 3,
+        },
+      });
 
       setTransactionInProgress(false);
     },
-    [merkleTreeAddress, umi],
+    [collectionAddress, merkleTreeAddress, setTransactionInProgress, umi],
   );
-
-  const uploadImage = async (
-    content: string | Uint8Array,
-    fileName: string,
-    mimeType: string,
-  ) => {
-    try {
-      const genericUmiFile = createGenericFile(content, fileName, {
-        tags: [{ name: "Content-Type", value: mimeType }],
-      });
-
-      const imageUri = await umi.uploader.upload([genericUmiFile]);
-
-      return imageUri[0];
-    } catch (error) {
-      toast.error(`An error occured while uploading image: ${error}}`);
-
-      return null;
-    }
-  };
-
-  const uploadMetadata = async (metadata: any) => {
-    try {
-      return await umi.uploader.uploadJson(metadata);
-    } catch (error) {
-      toast.error(`An error occured while uploading metadata: ${error}}`);
-
-      return null;
-    }
-  };
 
   return useMemo(
     () => ({
@@ -277,6 +358,8 @@ export default function useMinter() {
       fetchTreeConfig,
       createCollection,
       mintToCollection,
+      uploadImage,
+      uploadMetadata,
     }),
     [
       createMerkleTree,
@@ -284,6 +367,8 @@ export default function useMinter() {
       fetchTreeConfig,
       createCollection,
       mintToCollection,
+      uploadImage,
+      uploadMetadata,
     ],
   );
 }

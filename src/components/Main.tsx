@@ -1,6 +1,7 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Slide, ToastContainer } from "react-toastify";
-import Minter from "./Minter";
+import Airdrop from "./Airdrop";
+import MerkleTree from "./MerkleTree";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -10,8 +11,9 @@ export default function Main() {
   return (
     <main className="mt-18 flex h-full w-full flex-grow items-center justify-center px-8 py-8 sm:px-16">
       {publicKey ? (
-        <div className="mx-auto w-full max-w-6xl">
-          <Minter />
+        <div className="mx-auto grid w-full max-w-7xl gap-12">
+          <Airdrop />
+          <MerkleTree />
         </div>
       ) : (
         <div className="mx-auto w-full max-w-2xl">

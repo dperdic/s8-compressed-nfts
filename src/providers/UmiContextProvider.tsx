@@ -3,10 +3,10 @@ import type { Umi } from "@metaplex-foundation/umi";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { mplTokenMetadata } from "@metaplex-foundation/mpl-token-metadata";
+import { mplBubblegum } from "@metaplex-foundation/mpl-bubblegum";
+import { irysUploader } from "@metaplex-foundation/umi-uploader-irys";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { UmiContext } from "./UmiContext";
-import { irysUploader } from "@metaplex-foundation/umi-uploader-irys";
-import { mplBubblegum } from "@metaplex-foundation/mpl-bubblegum";
 
 export default function UmiContextProvider({
   children,
@@ -20,8 +20,8 @@ export default function UmiContextProvider({
   useEffect(() => {
     let umi: Umi | null = null;
 
-    if (wallet.connected && wallet.publicKey) {
-      umi = createUmi(connection.rpcEndpoint)
+    if (wallet.publicKey) {
+      umi = createUmi(connection.rpcEndpoint, { commitment: "confirmed" })
         .use(walletAdapterIdentity(wallet))
         .use(mplTokenMetadata())
         .use(mplBubblegum())
