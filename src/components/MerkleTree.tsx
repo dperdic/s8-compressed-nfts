@@ -53,7 +53,7 @@ export default function MerkleTree() {
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <h3 className="pb-4 text-xl font-semibold">Merkle tree</h3>
+      <h3 className="pb-4 text-xl font-semibold">Merkle Tree</h3>
 
       <div className="grid w-full gap-4 rounded-md bg-white p-4 shadow">
         <div className="break-all">
