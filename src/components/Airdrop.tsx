@@ -81,7 +81,7 @@ export default function Airdrop() {
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <h3 className="pb-4 text-xl font-semibold">SOL</h3>
+      <h3 className="pb-4 text-xl font-semibold">Airdrop</h3>
 
       <div className="grid w-full gap-4 rounded-md bg-white p-4 shadow">
         <div>Balance: {balance} SOL</div>
@@ -96,7 +96,7 @@ export default function Airdrop() {
             onChange={(event) => {
               setAirdropAmount(event.target.value);
             }}
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
           />
 
           <button
