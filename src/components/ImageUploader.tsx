@@ -1,9 +1,17 @@
 import { ChangeEvent, useState } from "react";
 import useMinter from "../hooks/useMinter";
-import { useTransactionStateStore } from "../store/minterStore";
+import {
+  useCollectionImageUrlStore,
+  useNftImageUrlStore,
+  useTransactionStateStore,
+} from "../store/minterStore";
 import { toast } from "react-toastify";
 
-export default function ImageUploader() {
+export default function ImageUploader({
+  type,
+}: {
+  type: "collection" | "nft";
+}) {
   const { uploadImage } = useMinter();
 
   const [file, setFile] = useState<{
@@ -15,6 +23,9 @@ export default function ImageUploader() {
   const transactionInProgress = useTransactionStateStore(
     (state) => state.transactionInProgress,
   );
+
+  const setCollectionUrl = useCollectionImageUrlStore((state) => state.setUrl);
+  const setNftUrl = useNftImageUrlStore((state) => state.setUrl);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -56,19 +67,33 @@ export default function ImageUploader() {
       file.mimeType,
     );
 
+    if (!imageUri) {
+      return;
+    }
+
+    switch (type) {
+      case "collection":
+        setCollectionUrl(imageUri);
+        break;
+
+      case "nft":
+        setNftUrl(imageUri);
+        break;
+    }
+
     setFile(null);
   };
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-3">
       <input
         onChange={handleFileChange}
         type="file"
         placeholder="Image"
-        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+        className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
       />
 
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex flex-col items-center gap-3 sm:flex-row">
         <button
           type="button"
           className="btn btn-md btn-black"
