@@ -18,11 +18,9 @@ export default function MerkleTree() {
     (state) => state.transactionInProgress,
   );
 
-  const merkleTreeAddress = useMerkleTreeAddressStore(
-    (state) => state.merkleTreeAddress,
-  );
+  const merkleTreeAddress = useMerkleTreeAddressStore((state) => state.address);
   const setMerkleTreeAddress = useMerkleTreeAddressStore(
-    (state) => state.setMerkleTreeAddress,
+    (state) => state.setAddress,
   );
 
   const handleCreateMerkleTree = async () => {
