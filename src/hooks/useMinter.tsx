@@ -26,22 +26,16 @@ import { NftMetadata } from "../utils/types";
 export default function useMinter() {
   const { umi } = useUmi();
 
-  const merkleTreeAddress = useMerkleTreeAddressStore(
-    (state) => state.merkleTreeAddress,
-  );
-  const setAddress = useMerkleTreeAddressStore(
-    (state) => state.setMerkleTreeAddress,
-  );
+  const merkleTreeAddress = useMerkleTreeAddressStore((state) => state.address);
+  const setAddress = useMerkleTreeAddressStore((state) => state.setAddress);
   const setMerkleTree = useMerkleTreeStore((state) => state.setMekleTree);
   const setTreeConfig = useMerkleTreeConfigStore(
     (state) => state.setTreeConfig,
   );
 
-  const collectionAddress = useCollectionAddressStore(
-    (state) => state.collectionAddress,
-  );
+  const collectionAddress = useCollectionAddressStore((state) => state.address);
   const setCollectionAddress = useCollectionAddressStore(
-    (state) => state.setCollectionAddress,
+    (state) => state.setAddress,
   );
 
   const setTransactionInProgress = useTransactionStateStore(
@@ -189,7 +183,7 @@ export default function useMinter() {
   );
 
   const uploadMetadata = useCallback(
-    async (metadata: any) => {
+    async (metadata: NftMetadata) => {
       if (!umi) {
         toast.error("Umi not initialized");
         setTransactionInProgress(false);
@@ -212,9 +206,7 @@ export default function useMinter() {
     async (
       collectionName: string,
       collectionSymbol: string,
-      content: string | Uint8Array,
-      fileName: string,
-      mimeType: string,
+      metadataUri: string,
     ) => {
       setTransactionInProgress(true);
 
@@ -226,54 +218,6 @@ export default function useMinter() {
       }
 
       const collectionMint = generateSigner(umi);
-
-      const imageUri = await uploadImage(content, fileName, mimeType);
-
-      if (!imageUri) {
-        return;
-      }
-
-      // schema: https://developers.metaplex.com/token-metadata/token-standard#the-non-fungible-standard
-      const metadata: NftMetadata = {
-        name: "Dujo Perdić",
-        description:
-          "I'm a web2 and web3 developer based in Croatia. Connect with me and lets work together!",
-        image: imageUri,
-        external_url: "https://linkedin.com/in/dujo-perdic",
-        attributes: [
-          {
-            trait_type: "LinkedIn",
-            value: "https://linkedin.com/in/dujo-perdic",
-          },
-          {
-            trait_type: "Github",
-            value: "https://github.com/dperdic",
-          },
-          {
-            trait_type: "Telegram",
-            value: "@dperdic",
-          },
-          {
-            trait_type: "Discord",
-            value: "dperdic",
-          },
-          {
-            trait_type: "X / Twitter",
-            value: "https://x.com/DPerdic",
-          },
-        ],
-        properties: {
-          files: [
-            {
-              uri: imageUri,
-              type: "image/jpeg",
-            },
-          ],
-          category: "image",
-        },
-      };
-
-      const metadataUri = await umi.uploader.uploadJson(metadata);
 
       try {
         const tx = await createNft(umi, {
@@ -305,7 +249,7 @@ export default function useMinter() {
 
       setTransactionInProgress(false);
     },
-    [setCollectionAddress, setTransactionInProgress, umi, uploadImage],
+    [setCollectionAddress, setTransactionInProgress, umi],
   );
 
   const mintToCollection = useCallback(
