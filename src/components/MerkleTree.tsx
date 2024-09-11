@@ -32,7 +32,8 @@ export default function MerkleTree() {
       maxDepthNumber = Number.parseInt(maxDepth);
       maxBufferSizeNumber = Number.parseInt(maxBufferSize);
       canopyDepthNumber = Number.parseInt(canopyDepth);
-    } catch (_error) {
+    } catch (error) {
+      console.error(error);
       toast.error("Invalid airdrop amount");
 
       return;

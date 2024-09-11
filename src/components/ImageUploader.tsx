@@ -25,7 +25,11 @@ export default function ImageUploader({
   );
 
   const setCollectionUrl = useCollectionImageUrlStore((state) => state.setUrl);
+  const setCollectionMimeType = useCollectionImageUrlStore(
+    (state) => state.setMimeType,
+  );
   const setNftUrl = useNftImageUrlStore((state) => state.setUrl);
+  const setNftMimeType = useNftImageUrlStore((state) => state.setMimeType);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -74,10 +78,12 @@ export default function ImageUploader({
     switch (type) {
       case "collection":
         setCollectionUrl(imageUri);
+        setCollectionMimeType(file.mimeType);
         break;
 
       case "nft":
         setNftUrl(imageUri);
+        setNftMimeType(file.mimeType);
         break;
     }
 
@@ -86,6 +92,8 @@ export default function ImageUploader({
 
   return (
     <div className="grid gap-3">
+      <div>Image uploader</div>
+
       <input
         onChange={handleFileChange}
         type="file"
@@ -93,7 +101,7 @@ export default function ImageUploader({
         className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
       />
 
-      <div className="flex flex-col items-center gap-3 sm:flex-row">
+      <div className="flex flex-col justify-center gap-3 sm:flex-row">
         <button
           type="button"
           className="btn btn-md btn-black"
@@ -106,7 +114,7 @@ export default function ImageUploader({
         <button
           type="button"
           className="btn btn-md btn-white"
-          disabled={transactionInProgress || !file}
+          disabled={transactionInProgress}
           onClick={() => setFile(null)}
         >
           Clear image

@@ -76,7 +76,7 @@ export default function useMinter() {
         setAddress(merkleTree.publicKey);
 
         toast.success(
-          `Transaction hash: ${base58.deserialize(tx.signature)[0]}}`,
+          `Transaction hash: ${base58.deserialize(tx.signature)[0]}`,
         );
       } catch (error) {
         toast.error("An error occured while creating merkle tree");
@@ -111,7 +111,8 @@ export default function useMinter() {
       });
 
       setMerkleTree(merkleTree);
-    } catch (_error) {
+    } catch (error) {
+      console.error(error);
       toast.error("An error occured while fetching merkle tree");
     }
 
@@ -145,7 +146,8 @@ export default function useMinter() {
       );
 
       setTreeConfig(treeConfig);
-    } catch (_error) {
+    } catch (error) {
+      console.error(error);
       toast.error("An error occured while fetching merkle tree config");
     }
 
@@ -239,11 +241,12 @@ export default function useMinter() {
         });
 
         toast.success(
-          `Transaction hash: ${base58.deserialize(tx.signature)[0]}}`,
+          `Transaction hash: ${base58.deserialize(tx.signature)[0]}`,
         );
 
         setCollectionAddress(collectionMint.publicKey);
-      } catch (_error) {
+      } catch (error) {
+        console.error(error);
         toast.error("An error occured when creating collection");
       }
 

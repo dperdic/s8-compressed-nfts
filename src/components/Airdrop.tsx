@@ -51,7 +51,8 @@ export default function Airdrop() {
 
     try {
       amount = Number(airdropAmount);
-    } catch (_error) {
+    } catch (error) {
+      console.error(error);
       toast.error("Invalid airdrop amount");
       setTransactionInProgress(false);
 

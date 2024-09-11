@@ -16,6 +16,7 @@ export default function MetadataUploader({
   const [metadata, setMetadata] = useState<NftMetadata>({
     name: "",
     image: "",
+    attributes: [],
   });
 
   const setCollectionUrl = useCollectionMetadataUrlStore(
@@ -56,6 +57,8 @@ export default function MetadataUploader({
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="col-span-1 sm:col-span-2">Metadata uploader</div>
+
       <input
         onChange={(event) => {
           setMetadata((currentMetadata) => ({
@@ -66,7 +69,7 @@ export default function MetadataUploader({
         type="text"
         required
         placeholder="Name"
-        className="col-span-2 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-1 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
       />
       <input
         onChange={(event) => {
@@ -78,7 +81,7 @@ export default function MetadataUploader({
         type="text"
         required
         placeholder="Description"
-        className="col-span-2 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-1 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
       />
 
       <input
@@ -100,7 +103,7 @@ export default function MetadataUploader({
         type="text"
         required
         placeholder="Image url"
-        className="col-span-2 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-1 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
       />
       <input
         onChange={(event) => {
@@ -111,14 +114,14 @@ export default function MetadataUploader({
         }}
         type="text"
         placeholder="External url"
-        className="col-span-2 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-1 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
       />
 
-      <div>Attributes:</div>
+      <div className="col-span-1 sm:col-span-2">Attributes</div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-1">
-        {metadata.attributes?.map((value, i) => (
-          <>
+      {metadata.attributes?.map((value, i) => (
+        <div key={`wrapper-${i}`} className="col-span-1 sm:col-span-2">
+          <div key={`row-${i}`} className="flex flex-row gap-3">
             <input
               key={`trait-${i}`}
               onChange={(event) => {
@@ -137,7 +140,7 @@ export default function MetadataUploader({
               type="text"
               required
               placeholder="Trait type"
-              className="col-span-2 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-1 sm:text-sm"
+              className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
             />
             <input
               key={`value-${i}`}
@@ -156,51 +159,72 @@ export default function MetadataUploader({
               value={value.value}
               type="text"
               required
-              placeholder="Description"
-              className="col-span-2 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-1 sm:text-sm"
+              placeholder="Value"
+              className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
             />
-          </>
-        ))}
-
-        <div className="grid-cols-1 items-center sm:grid-cols-2">
-          <button
-            type="button"
-            className="btn btn-md btn-black"
-            disabled={transactionInProgress || !metadata}
-            onClick={() =>
-              setMetadata((currentMetadata) => {
-                const attributes = currentMetadata.attributes;
-
-                if (attributes) {
-                  attributes?.push({
-                    trait_type: "",
-                    value: "",
-                  });
+            <button
+              key={`removeButton-${i}}`}
+              type="button"
+              className="btn btn-sm btn-white"
+              disabled={transactionInProgress || !metadata}
+              onClick={() =>
+                setMetadata((currentMetadata) => {
+                  const newAttributes = currentMetadata.attributes!.filter(
+                    (_x, idx) => idx !== i,
+                  );
 
                   return {
                     ...currentMetadata,
-                    attributes: attributes,
+                    attributes: newAttributes,
                   };
-                }
-
-                return {
-                  ...currentMetadata,
-                  attributes: [
-                    {
-                      trait_type: "",
-                      value: "",
-                    },
-                  ],
-                };
-              })
-            }
-          >
-            Add attribute
-          </button>
+                })
+              }
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
+      ))}
+
+      <div className="col-span-1 text-center sm:col-span-2">
+        <button
+          type="button"
+          className="btn btn-md btn-black"
+          disabled={transactionInProgress || !metadata}
+          onClick={() =>
+            setMetadata((currentMetadata) => {
+              const newAttributes = [...currentMetadata.attributes!];
+
+              newAttributes.push({
+                trait_type: "",
+                value: "",
+              });
+
+              return {
+                ...currentMetadata,
+                attributes: newAttributes,
+              };
+            })
+          }
+        >
+          Add attribute
+        </button>
       </div>
 
-      <div className="grid-cols-1 items-center sm:grid-cols-2">
+      <div className="col-span-1 text-center sm:col-span-2">
         <button
           type="button"
           className="btn btn-md btn-black"

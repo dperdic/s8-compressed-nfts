@@ -4,6 +4,7 @@ import Airdrop from "./Airdrop";
 import MerkleTree from "./MerkleTree";
 
 import "react-toastify/dist/ReactToastify.css";
+import Collection from "./Collection";
 
 export default function Main() {
   const { publicKey } = useWallet();
@@ -14,6 +15,7 @@ export default function Main() {
         <div className="mx-auto grid w-full max-w-7xl gap-12">
           <Airdrop />
           <MerkleTree />
+          <Collection />
         </div>
       ) : (
         <div className="mx-auto w-full max-w-2xl">
