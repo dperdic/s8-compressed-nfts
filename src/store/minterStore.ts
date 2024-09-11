@@ -2,14 +2,9 @@ import { MerkleTree, TreeConfig } from "@metaplex-foundation/mpl-bubblegum";
 import { PublicKey } from "@metaplex-foundation/umi";
 import { create } from "zustand";
 
-interface MerkleTreeAddressStore {
-  merkleTreeAddress: PublicKey | null;
-  setMerkleTreeAddress: (newAddress: PublicKey | null) => void;
-}
-
-interface CollectionAddressStore {
-  collectionAddress: PublicKey | null;
-  setCollectionAddress: (newAddress: PublicKey | null) => void;
+interface AddressStore {
+  address: PublicKey | null;
+  setAddress: (newAddress: PublicKey | null) => void;
 }
 
 interface MerkleTreeStore {
@@ -32,21 +27,20 @@ interface FileUrlStore {
   setUrl: (newUrl: string | null) => void;
 }
 
-export const useMerkleTreeAddressStore = create<MerkleTreeAddressStore>(
-  (set) => ({
-    merkleTreeAddress: null,
-    setMerkleTreeAddress: (newAddress) =>
-      set(() => ({ merkleTreeAddress: newAddress })),
-  }),
-);
+interface ImageStore extends FileUrlStore {
+  mimeType: string | null;
+  setMimeType: (newMimeType: string | null) => void;
+}
 
-export const useCollectionAddressStore = create<CollectionAddressStore>(
-  (set) => ({
-    collectionAddress: null,
-    setCollectionAddress: (newAddress) =>
-      set(() => ({ collectionAddress: newAddress })),
-  }),
-);
+export const useMerkleTreeAddressStore = create<AddressStore>((set) => ({
+  address: null,
+  setAddress: (newAddress) => set(() => ({ address: newAddress })),
+}));
+
+export const useCollectionAddressStore = create<AddressStore>((set) => ({
+  address: null,
+  setAddress: (newAddress) => set(() => ({ address: newAddress })),
+}));
 
 export const useMerkleTreeStore = create<MerkleTreeStore>((set) => ({
   merkleTree: null,
@@ -68,9 +62,11 @@ export const useTransactionStateStore = create<TransactionStateStore>(
   }),
 );
 
-export const useCollectionImageUrlStore = create<FileUrlStore>((set) => ({
+export const useCollectionImageUrlStore = create<ImageStore>((set) => ({
   url: null,
+  mimeType: null,
   setUrl: (newUrl) => set(() => ({ url: newUrl })),
+  setMimeType: (newMimeType) => set(() => ({ mimeType: newMimeType })),
 }));
 
 export const useCollectionMetadataUrlStore = create<FileUrlStore>((set) => ({
@@ -78,9 +74,11 @@ export const useCollectionMetadataUrlStore = create<FileUrlStore>((set) => ({
   setUrl: (newUrl) => set(() => ({ url: newUrl })),
 }));
 
-export const useNftImageUrlStore = create<FileUrlStore>((set) => ({
+export const useNftImageUrlStore = create<ImageStore>((set) => ({
   url: null,
+  mimeType: null,
   setUrl: (newUrl) => set(() => ({ url: newUrl })),
+  setMimeType: (newMimeType) => set(() => ({ mimeType: newMimeType })),
 }));
 
 export const useNftMetadataUrlStore = create<FileUrlStore>((set) => ({
