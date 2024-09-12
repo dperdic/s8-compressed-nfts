@@ -17,7 +17,7 @@ body {
 }
 
 .btn {
-  @apply items-center whitespace-nowrap border border-transparent font-medium focus:outline-none disabled:opacity-85;
+  @apply items-center whitespace-nowrap border border-transparent font-medium focus:outline-none disabled:opacity-75;
 }
 
 .btn-sm {
