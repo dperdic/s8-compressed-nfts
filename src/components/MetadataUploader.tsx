@@ -69,7 +69,7 @@ export default function MetadataUploader({
         type="text"
         required
         placeholder="Name"
-        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
       />
       <input
         onChange={(event) => {
@@ -81,7 +81,7 @@ export default function MetadataUploader({
         type="text"
         required
         placeholder="Description"
-        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
       />
 
       <input
@@ -103,7 +103,7 @@ export default function MetadataUploader({
         type="text"
         required
         placeholder="Image url"
-        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
       />
       <input
         onChange={(event) => {
@@ -114,7 +114,7 @@ export default function MetadataUploader({
         }}
         type="text"
         placeholder="External url"
-        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
       />
 
       <div className="col-span-1 sm:col-span-2">Attributes</div>
