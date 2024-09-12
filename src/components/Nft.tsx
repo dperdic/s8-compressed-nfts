@@ -4,6 +4,8 @@ import ImageUploader from "./ImageUploader";
 import MetadataUploader from "./MetadataUploader";
 import {
   useCollectionAddressStore,
+  useNftImageUrlStore,
+  useNftMetadataUrlStore,
   useTransactionStateStore,
 } from "../store/minterStore";
 import { PublicKey, publicKey } from "@metaplex-foundation/umi";
@@ -12,10 +14,14 @@ import { toast } from "react-toastify";
 export default function Nft() {
   const { mintToCollection } = useMinter();
 
+  const [localImageUrl, setLocalImageUrl] = useState("");
+  const [localImageMimeType, setLocalImageMimeType] = useState("");
+  const [localMetadataUrl, setLocalMetadataUrl] = useState("");
+
   const collectionAddress = useCollectionAddressStore((state) => state.address);
 
   const [localName, setLocalName] = useState("");
-  const [localMetadataUrl, setLocalMetadataUri] = useState("");
+
   const [localSymbol, setLocalSymbol] = useState("");
   const [localAddresses, setLocalAddresses] = useState("");
 
@@ -23,10 +29,19 @@ export default function Nft() {
     (state) => state.transactionInProgress,
   );
 
+  const imageUrl = useNftImageUrlStore((state) => state.url);
+  const imageMimeType = useNftImageUrlStore((state) => state.mimeType);
+  const setImageUrl = useNftImageUrlStore((state) => state.setUrl);
+  const setImageMimeType = useNftImageUrlStore((state) => state.setMimeType);
+
+  const metadataUrl = useNftMetadataUrlStore((state) => state.url);
+  const setMetadataUrl = useNftMetadataUrlStore((state) => state.setUrl);
+
   const handleMintToCollection = async () => {
-    if (!collectionAddress) {
+    if (!collectionAddress || !metadataUrl) {
       return;
     }
+
     let addresses: PublicKey[];
 
     try {
@@ -38,7 +53,7 @@ export default function Nft() {
       return;
     }
 
-    await mintToCollection(localName, localSymbol, localMetadataUrl, addresses);
+    await mintToCollection(localName, localSymbol, metadataUrl, addresses);
   };
 
   return (
@@ -46,7 +61,76 @@ export default function Nft() {
       <h3 className="pb-4 text-xl font-semibold">cNFT</h3>
 
       <div className="grid w-full gap-8 rounded-md bg-white p-4 shadow">
-        <div className="flex flex-col gap-2 break-all"></div>
+        <div className="flex flex-col gap-2 break-all">
+          <div>Image url: {imageUrl}</div>
+          <div>Image mimeType: {imageMimeType}</div>
+          <div>Metadata url: {metadataUrl}</div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="text"
+              placeholder="Image url"
+              value={localImageUrl}
+              onChange={(event) => {
+                setLocalImageUrl(event.target.value);
+              }}
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+            />
+
+            <input
+              type="text"
+              placeholder="Mime type"
+              value={localImageMimeType}
+              onChange={(event) => {
+                setLocalImageMimeType(event.target.value);
+              }}
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+            />
+
+            <button
+              type="button"
+              className="btn btn-md btn-black"
+              disabled={
+                transactionInProgress || !localImageMimeType || !localImageUrl
+              }
+              onClick={() => {
+                setImageUrl(localImageUrl);
+                setImageMimeType(localImageMimeType);
+
+                setLocalImageUrl("");
+                setLocalImageMimeType("");
+              }}
+            >
+              Set Image Data
+            </button>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="text"
+              placeholder="Metadata url"
+              value={localMetadataUrl}
+              onChange={(event) => {
+                setLocalMetadataUrl(event.target.value);
+              }}
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+            />
+
+            <button
+              type="button"
+              className="btn btn-md btn-black"
+              disabled={transactionInProgress || !localMetadataUrl}
+              onClick={() => {
+                setMetadataUrl(localMetadataUrl);
+
+                setLocalMetadataUrl("");
+              }}
+            >
+              Set Metadata Url
+            </button>
+          </div>
+        </div>
 
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -56,16 +140,6 @@ export default function Nft() {
               value={localName}
               onChange={(event) => {
                 setLocalName(event.target.value);
-              }}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
-            />
-
-            <input
-              type="text"
-              placeholder="Metadata url"
-              value={localMetadataUrl}
-              onChange={(event) => {
-                setLocalMetadataUri(event.target.value);
               }}
               className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
             />
@@ -100,12 +174,12 @@ export default function Nft() {
                 !collectionAddress ||
                 !localName ||
                 !localSymbol ||
-                !localMetadataUrl ||
-                !localAddresses
+                !localAddresses ||
+                !metadataUrl
               }
               onClick={handleMintToCollection}
             >
-              Create collection
+              Mint NFTs
             </button>
           </div>
         </div>

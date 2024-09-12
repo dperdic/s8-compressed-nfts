@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { toast } from "react-toastify";
@@ -12,30 +12,10 @@ export default function Airdrop() {
   const setTransactionInProgress = useTransactionStateStore(
     (state) => state.setTransactionInProgress,
   );
-  const [balance, setBalance] = useState(0);
+
   const [airdropAmount, setAirdropAmount] = useState("");
   const { connection } = useConnection();
   const { publicKey } = useWallet();
-
-  useEffect(() => {
-    if (!connection || !publicKey) {
-      return;
-    }
-
-    connection.onAccountChange(
-      publicKey,
-      (updatedAccountInfo) => {
-        setBalance(updatedAccountInfo.lamports / LAMPORTS_PER_SOL);
-      },
-      { commitment: "confirmed" },
-    );
-
-    connection.getAccountInfo(publicKey).then((info) => {
-      if (info) {
-        setBalance(info.lamports / LAMPORTS_PER_SOL);
-      }
-    });
-  }, [connection, publicKey]);
 
   const requestAirdrop = async () => {
     setTransactionInProgress(true);
@@ -85,8 +65,6 @@ export default function Airdrop() {
       <h3 className="pb-4 text-xl font-semibold">Airdrop</h3>
 
       <div className="grid w-full gap-4 rounded-md bg-white p-4 shadow">
-        <div>Balance: {balance} SOL</div>
-
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
             type="number"

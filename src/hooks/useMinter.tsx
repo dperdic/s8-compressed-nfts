@@ -12,7 +12,6 @@ import {
   percentAmount,
   PublicKey,
   transactionBuilder,
-  TransactionBuilder,
 } from "@metaplex-foundation/umi";
 import { base58 } from "@metaplex-foundation/umi/serializers";
 import { toast } from "react-toastify";
@@ -179,7 +178,7 @@ export default function useMinter() {
 
         return imageUri[0];
       } catch (error) {
-        toast.error(`An error occured while uploading image: ${error}}`);
+        toast.error(`An error occured while uploading image: ${error}`);
 
         return null;
       }
@@ -199,7 +198,7 @@ export default function useMinter() {
       try {
         return await umi.uploader.uploadJson(metadata);
       } catch (error) {
-        toast.error(`An error occured while uploading metadata: ${error}}`);
+        toast.error(`An error occured while uploading metadata: ${error}`);
 
         return null;
       }
@@ -279,66 +278,35 @@ export default function useMinter() {
         return;
       }
 
-      // const builder = transactionBuilder();
-
-      // for (const address of addresses) {
-      //   builder
-      //     .add(
-      //       mintToCollectionV1(umi, {
-      //         leafOwner: address,
-      //         merkleTree: merkleTreeAddress,
-      //         collectionMint: collectionAddress,
-      //         metadata: {
-      //           name: name,
-      //           symbol: symbol,
-      //           uri: metadataUrl,
-      //           sellerFeeBasisPoints: 10000,
-      //           isMutable: true,
-      //           collection: { key: collectionAddress, verified: true },
-      //           creators: [
-      //             {
-      //               address: umi.identity.publicKey,
-      //               verified: true,
-      //               share: 100,
-      //             },
-      //           ],
-      //         },
-      //       }),
-      //     )
-      //     .build(umi);
-      // }
-
       try {
-        // const tx = await builder.sendAndConfirm(umi, {
-        //   confirm: {
-        //     commitment: "confirmed",
-        //   },
-        //   send: {
-        //     commitment: "confirmed",
-        //     maxRetries: 3,
-        //   },
-        // });
+        let builder = transactionBuilder();
 
-        const tx = await mintToCollectionV1(umi, {
-          leafOwner: addresses[0],
-          merkleTree: merkleTreeAddress,
-          collectionMint: collectionAddress,
-          metadata: {
-            name: name,
-            symbol: symbol,
-            uri: metadataUrl,
-            sellerFeeBasisPoints: 10000,
-            isMutable: true,
-            collection: { key: collectionAddress, verified: true },
-            creators: [
-              {
-                address: umi.identity.publicKey,
-                verified: true,
-                share: 100,
-              },
-            ],
-          },
-        }).sendAndConfirm(umi, {
+        for (const address of addresses) {
+          const txBuilder = mintToCollectionV1(umi, {
+            leafOwner: address,
+            merkleTree: merkleTreeAddress,
+            collectionMint: collectionAddress,
+            metadata: {
+              name: name,
+              symbol: symbol,
+              uri: metadataUrl,
+              sellerFeeBasisPoints: 10000,
+              isMutable: true,
+              collection: { key: collectionAddress, verified: true },
+              creators: [
+                {
+                  address: umi.identity.publicKey,
+                  verified: true,
+                  share: 100,
+                },
+              ],
+            },
+          });
+
+          builder = builder.add(txBuilder);
+        }
+
+        const tx = await builder.sendAndConfirm(umi, {
           confirm: {
             commitment: "confirmed",
           },
