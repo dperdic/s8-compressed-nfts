@@ -10,6 +10,10 @@ Eight assignment for the Solana Summer Fellowship 2024.
 Create a cNFT collection of your own profile picture and social links as metadata and airdrop it to other fellows.
 ```
 
+### Solution
+
+Created a collection NFT and minted cNFTs from it. The collection NFT can be viewed [here](https://explorer.solana.com/address/6MGjmJZjMxJCy3Pxqt7C3CGvGWmYXfspmzuZf2cGWMXz).
+
 ### Building the app
 
 Create a `.env` file based on the template provided.
