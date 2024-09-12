@@ -2,9 +2,9 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Slide, ToastContainer } from "react-toastify";
 import Airdrop from "./Airdrop";
 import MerkleTree from "./MerkleTree";
-
-import "react-toastify/dist/ReactToastify.css";
 import Collection from "./Collection";
+import Nft from "./Nft";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Main() {
   const { publicKey } = useWallet();
@@ -16,6 +16,7 @@ export default function Main() {
           <Airdrop />
           <MerkleTree />
           <Collection />
+          <Nft />
         </div>
       ) : (
         <div className="mx-auto w-full max-w-2xl">

@@ -10,6 +10,9 @@ import {
   createGenericFile,
   generateSigner,
   percentAmount,
+  PublicKey,
+  transactionBuilder,
+  TransactionBuilder,
 } from "@metaplex-foundation/umi";
 import { base58 } from "@metaplex-foundation/umi/serializers";
 import { toast } from "react-toastify";
@@ -256,7 +259,12 @@ export default function useMinter() {
   );
 
   const mintToCollection = useCallback(
-    async (_metadata: any) => {
+    async (
+      name: string,
+      symbol: string,
+      metadataUrl: string,
+      addresses: PublicKey[],
+    ) => {
       setTransactionInProgress(true);
 
       if (!umi) {
@@ -271,30 +279,82 @@ export default function useMinter() {
         return;
       }
 
-      await mintToCollectionV1(umi, {
-        leafOwner: umi.identity.publicKey,
-        merkleTree: merkleTreeAddress,
-        collectionMint: collectionAddress,
-        metadata: {
-          name: "Dujo Perdić",
-          uri: "https://example.com/my-cnft.json",
-          sellerFeeBasisPoints: 10000,
-          isMutable: true,
-          symbol: "DPERDIC",
-          collection: { key: collectionAddress, verified: true },
-          creators: [
-            { address: umi.identity.publicKey, verified: true, share: 100 },
-          ],
-        },
-      }).sendAndConfirm(umi, {
-        confirm: {
-          commitment: "confirmed",
-        },
-        send: {
-          commitment: "confirmed",
-          maxRetries: 3,
-        },
-      });
+      // const builder = transactionBuilder();
+
+      // for (const address of addresses) {
+      //   builder
+      //     .add(
+      //       mintToCollectionV1(umi, {
+      //         leafOwner: address,
+      //         merkleTree: merkleTreeAddress,
+      //         collectionMint: collectionAddress,
+      //         metadata: {
+      //           name: name,
+      //           symbol: symbol,
+      //           uri: metadataUrl,
+      //           sellerFeeBasisPoints: 10000,
+      //           isMutable: true,
+      //           collection: { key: collectionAddress, verified: true },
+      //           creators: [
+      //             {
+      //               address: umi.identity.publicKey,
+      //               verified: true,
+      //               share: 100,
+      //             },
+      //           ],
+      //         },
+      //       }),
+      //     )
+      //     .build(umi);
+      // }
+
+      try {
+        // const tx = await builder.sendAndConfirm(umi, {
+        //   confirm: {
+        //     commitment: "confirmed",
+        //   },
+        //   send: {
+        //     commitment: "confirmed",
+        //     maxRetries: 3,
+        //   },
+        // });
+
+        const tx = await mintToCollectionV1(umi, {
+          leafOwner: addresses[0],
+          merkleTree: merkleTreeAddress,
+          collectionMint: collectionAddress,
+          metadata: {
+            name: name,
+            symbol: symbol,
+            uri: metadataUrl,
+            sellerFeeBasisPoints: 10000,
+            isMutable: true,
+            collection: { key: collectionAddress, verified: true },
+            creators: [
+              {
+                address: umi.identity.publicKey,
+                verified: true,
+                share: 100,
+              },
+            ],
+          },
+        }).sendAndConfirm(umi, {
+          confirm: {
+            commitment: "confirmed",
+          },
+          send: {
+            commitment: "confirmed",
+            maxRetries: 3,
+          },
+        });
+
+        toast.success(
+          `Transaction hash: ${base58.deserialize(tx.signature)[0]}`,
+        );
+      } catch (error) {
+        console.error(error);
+        toast.error("An error occured when minting cNFTs");
+      }
 
       setTransactionInProgress(false);
     },

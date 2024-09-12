@@ -26,13 +26,14 @@ export default function UmiContextProvider({
         .use(mplTokenMetadata())
         .use(mplBubblegum())
         .use(
-          irysUploader({
-            // mainnet address: "https://node1.irys.xyz"
-            // devnet address: "https://devnet.irys.xyz"
-            address: connection.rpcEndpoint.includes("mainnet")
-              ? "https://node1.irys.xyz"
-              : "https://devnet.irys.xyz",
-          }),
+          irysUploader(),
+          // irysUploader({
+          //   // mainnet address: "https://node1.irys.xyz"
+          //   // devnet address: "https://devnet.irys.xyz"
+          //   address: connection.rpcEndpoint.includes("mainnet")
+          //     ? "https://node1.irys.xyz"
+          //     : "https://devnet.irys.xyz",
+          // }),
         );
     }
 
