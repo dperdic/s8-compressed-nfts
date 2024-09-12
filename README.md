@@ -28,6 +28,8 @@ bun dev
 
 ### Instructions
 
+This app allows you to create any new compressed NFT collection of your choice.
+
 1. Connect your wallet
 
    1.1. Airdrop some SOL if you require it (devnet only)
