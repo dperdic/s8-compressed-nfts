@@ -1,4 +1,4 @@
-# S7 - Solana Mobile
+# S8 - Solana Compressed NFTs
 
 Eight assignment for the Solana Summer Fellowship 2024.
 
