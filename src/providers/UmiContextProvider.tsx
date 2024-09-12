@@ -25,16 +25,7 @@ export default function UmiContextProvider({
         .use(walletAdapterIdentity(wallet))
         .use(mplTokenMetadata())
         .use(mplBubblegum())
-        .use(
-          irysUploader(),
-          // irysUploader({
-          //   // mainnet address: "https://node1.irys.xyz"
-          //   // devnet address: "https://devnet.irys.xyz"
-          //   address: connection.rpcEndpoint.includes("mainnet")
-          //     ? "https://node1.irys.xyz"
-          //     : "https://devnet.irys.xyz",
-          // }),
-        );
+        .use(irysUploader());
     }
 
     setUmi(umi);
