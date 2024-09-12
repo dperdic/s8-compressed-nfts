@@ -93,7 +93,7 @@ export default function MetadataUploader({
               files: [
                 {
                   uri: event.target.value,
-                  type: "",
+                  type: currentMetadata?.properties?.files[0].type,
                 },
               ],
               category: "image",
@@ -105,6 +105,28 @@ export default function MetadataUploader({
         placeholder="Image url"
         className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
       />
+
+      <input
+        onChange={(event) => {
+          setMetadata((currentMetadata) => ({
+            ...currentMetadata,
+            properties: {
+              files: [
+                {
+                  uri: currentMetadata?.properties?.files[0].uri,
+                  type: event.target.value,
+                },
+              ],
+              category: "image",
+            },
+          }));
+        }}
+        type="text"
+        required
+        placeholder="Mime type"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+      />
+
       <input
         onChange={(event) => {
           setMetadata((currentMetadata) => ({
@@ -114,7 +136,7 @@ export default function MetadataUploader({
         }}
         type="text"
         placeholder="External url"
-        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+        className="col-span-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-800 focus:outline-none focus:ring-gray-800 disabled:bg-gray-50 disabled:text-gray-500 sm:col-span-2 sm:text-sm"
       />
 
       <div className="col-span-1 sm:col-span-2">Attributes</div>
@@ -228,7 +250,13 @@ export default function MetadataUploader({
         <button
           type="button"
           className="btn btn-md btn-black"
-          disabled={transactionInProgress || !metadata}
+          disabled={
+            transactionInProgress ||
+            !metadata?.name ||
+            !metadata.description ||
+            !metadata?.image ||
+            !metadata.properties?.files[0]?.type
+          }
           onClick={handleUpload}
         >
           Upload Metadata
